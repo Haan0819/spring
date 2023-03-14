@@ -1,6 +1,0 @@
-spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-spring.datasource.url=jdbc:mariadb://svc.sel3.cloudtype.app:32224/hostserver
-spring.datasource.username=root
-spring.datasource.password=0819
-
-server.port=8090

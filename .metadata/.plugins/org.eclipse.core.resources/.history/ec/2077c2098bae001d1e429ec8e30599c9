@@ -1,5 +1,0 @@
-package com.omo.service;
-
-public interface PersonService {
-
-}

@@ -1,12 +1,13 @@
 eclipse.preferences.version=1
-org.springframework.ide.eclipse.boot.wizard.PopularityTracker.web=2
-org.springframework.ide.eclipse.boot.wizard.PreferredSelections.artifactId=omo
-org.springframework.ide.eclipse.boot.wizard.PreferredSelections.bootVersion=3.0.2
+org.springframework.ide.eclipse.boot.wizard.PopularityTracker.data-jpa=1
+org.springframework.ide.eclipse.boot.wizard.PopularityTracker.web=5
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.artifactId=omo-1
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.bootVersion=3.0.3
 org.springframework.ide.eclipse.boot.wizard.PreferredSelections.description=omo project for Spring Boot
 org.springframework.ide.eclipse.boot.wizard.PreferredSelections.groupId=com.omo
 org.springframework.ide.eclipse.boot.wizard.PreferredSelections.javaVersion=17
 org.springframework.ide.eclipse.boot.wizard.PreferredSelections.language=java
-org.springframework.ide.eclipse.boot.wizard.PreferredSelections.name=omo
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.name=omo-1
 org.springframework.ide.eclipse.boot.wizard.PreferredSelections.packageName=com.omo
 org.springframework.ide.eclipse.boot.wizard.PreferredSelections.packaging=jar
 org.springframework.ide.eclipse.boot.wizard.PreferredSelections.type=MAVEN

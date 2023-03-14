@@ -10,14 +10,31 @@
 		
 	</select>
 	
-	<select id="getPerson" parameterType="int" resultType="com.omo.dto.Person">
-		SELECT * FROM person WHERE id=#{id}
+	<select id="getPerson" resultType="com.omo.dto.Person" parameterType="com.omo.dto.Person">
+		SELECT * FROM person WHERE id=#{person.id}
 	</select>
+	
+	<select id="getLogin" resultType="com.omo.dto.user_data" parameterType="com.omo.dto.user_data">
+		SELECT * FROM user_data WHERE id=#{data.userName} and pw=#{data.password}
+	</select>
+	
+	<select id="signin" resultType="com.omo.dto.LoginRequest" parameterType="com.omo.dto.LoginRequest">
+		SELECT * FROM user_data WHERE id=#{data.userName} and pw=#{data.password}
+	</select>
+	
+	<insert id="insertData" parameterType="com.omo.dto.user_data" useGeneratedKeys="true" keyProperty="no">
+		INSERT INTO user_data (userName, password, name, birth, sex)
+		VALUES (#{userName}, #{password}, #{name}, #{birth}, #{sex})
+	</insert>
 	
 	<insert id="insertPerson" parameterType="com.omo.dto.Person" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO person (name, job) 
 		VALUES (#{name}, #{job})
 	</insert>
+	
+	<select id="getUser_id" resultType="com.omo.dto.user_data">
+		SELECT * FROM user_data WHERE id=#{data.userName}
+	</select>
 	
 	<update id="updatePerson">
 		UPDATE person SET name=#{person.name}, job=#{person.job} 

@@ -1,5 +1,6 @@
 package com.omo.dto;
 
+
 /*
  * 데이터를 표현하기 위해 정의한 클래스
  * VO(Value Object) : 단순히 데이터를 표현할 때 주로 사용하는 약어

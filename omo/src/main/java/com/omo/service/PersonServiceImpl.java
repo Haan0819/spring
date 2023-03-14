@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 
 import com.omo.dao.PersonDAO;
 import com.omo.dto.Person;
+import com.omo.dto.user_data;
 
 @Service
 public class PersonServiceImpl implements PersonService {
 
 	@Autowired
 	private PersonDAO dao;
+	
 	
 	@Override
 	public List<Person> getPersons() {
@@ -23,11 +25,31 @@ public class PersonServiceImpl implements PersonService {
 	public Person getPerson(Integer id) {
 		return dao.getPerson(id);
 	}
+	
+	@Override
+	public user_data getLogin(user_data data) {
+		user_data getData = new user_data();
+		getData.setUserName(data.getUserName());
+		getData.setPassword(data.getPassword());
+		
+		return getData;
+	}
+	
+	@Override
+	public void insertData(user_data data) {
+		dao.insertData(data);
+	}
+
 
 	@Override
 	public void insertPerson(Person person) {
 		
 		dao.insertPerson(person);
+	}
+	
+	@Override
+	public List<user_data> getUser_id(user_data data) {
+		return dao.getUser_id(data);
 	}
 
 	@Override
