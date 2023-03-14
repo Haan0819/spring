@@ -85,12 +85,22 @@ section {
   width: 100%;
   height: 460px;
   background-size: cover;
+  z-index: 1;
 }
 
 .home_container {
   width: 100%;
-
+  justify-content: center;
+  align-items: center;
   display: flex;
+}
+
+.homeh1 {
+  position: absolute;
+  display: flex;
+  z-index: 5;
+  justify-content: center;
+  align-items: center;
 }
 
 
@@ -166,8 +176,9 @@ section {
 
 .signup_con {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   height: 150vh;
   margin-top: 80px;
 }
