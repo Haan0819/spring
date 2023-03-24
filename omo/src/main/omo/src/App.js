@@ -1,54 +1,38 @@
-import { Route, Routes } from 'react-router-dom';
-import './App.css';
-import Main from './Main'
-import Product from './Product'
-import Home from './Home'
-import Products from './Products'
-import Layout from './Layout'
-import NotFound from './NotFound';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
-import Search from './Search';
-import SearchPw from './SearchPw';
-import { useSelector } from 'react-redux';
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import Omocard from "./components/Omocard";
+import Footer from "./components/Footer";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RoutesSetup from "./routes/RoutesSetup";
+import Index from "./pages/Index";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignUpPage";
+import BoardList from "./pages/Board/BoardList";
+import BoardCreate from "./pages/Board/BoardCreate";
+import NewNav from "./components/NewNav";
+import BoardDetail from "./pages/Board/BoardDetail";
+import BoardMy from "./pages/Board/BoardMy";
+import ChangeInfoPage from "./pages/ChangeInfoPage";
+import NoMatch from "./routes/NoMatch";
 
-const Loading = () => {
+export default function App() {
   return (
-    <div>
-      loading
-    </div>
-  )
-}
-
-function App() {
-  const isLoading = useSelector(state => state.isLoading)
-
-
-  return (
-    <>
-      <div>
-        {isLoading ?
-          <div>
-            <Loading />
-          </div>
-          :
-          <Routes>
-            <Route path='/' element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path='/main' element={<Main />} />
-              <Route path='/products' element={<Products />} />
-              <Route path='/product/:productid' element={<Product />} />
-              <Route path='/signin' element={<SignIn />} />
-              <Route path='/signup' element={<SignUp />} />
-              <Route path='/search' element={<Search />} />
-              <Route path='/search_pw' element={<SearchPw />} />
-            </Route>
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-        }
-      </div>
-    </>
+    <main>
+      <BrowserRouter>
+        {/* <NewNav /> */}
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/board" element={<BoardList />} />
+          <Route path="/board/create" element={<BoardCreate />} />
+          <Route path="/board/detail" element={<BoardDetail />} />
+          <Route path="/board/my" element={<BoardMy />} />
+          <Route path="/changeinfo" element={<ChangeInfoPage />} />
+          <Route path="*" element={<NoMatch />} />
+        </Routes>
+        {/* <Footer /> */}
+      </BrowserRouter>
+    </main>
   );
 }
-
-export default App;

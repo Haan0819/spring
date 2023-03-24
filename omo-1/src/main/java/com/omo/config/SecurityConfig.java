@@ -35,9 +35,13 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/signin", "/api/auth/signup", "api/auth/find_id").permitAll()
-                .requestMatchers("/api/auth/test").permitAll()
+//                .requestMatchers("/api/auth/**", "/api/post/**").permitAll()
+//                .requestMatchers("/api/post/add_post", "/api/comment/add/**").hasAnyRole("USER")
+                .requestMatchers("/api/comment/delete/**","/api/post/add_post", "/api/comment/add/**", "api/post/delete/**"
+                		).hasAnyRole("USER", "ADMIN")
+//                .requestMatchers("/api/post/list", "/api/auth/refresh", "/api/comment/list/**").permitAll()
                 .anyRequest().permitAll()
+//                .anyRequest().authenticated()
                 .and()
                 .logout()
                 .logoutUrl("/logout")  // 로그아웃 경로 설정

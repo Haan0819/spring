@@ -5,14 +5,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-
-
 import { CookiesProvider } from 'react-cookie';
-
 import { Provider } from "react-redux";
 import { createStore } from 'redux';
-
-
 import jwt_decode from 'jwt-decode';
 import { login, setCurrentUser } from './stores/actions';
 import axios from 'axios';

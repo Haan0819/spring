@@ -19,7 +19,6 @@ const SignIn = () => {
         id: '',
         pw: ''
     })
-    console.log({ 'username': input.id, 'password': input.pw })
     const onClickLogin = (e) => {
         e.preventDefault();
 
@@ -31,13 +30,14 @@ const SignIn = () => {
             if (response.data != null) {
                 dispatch(setMessage(response.data))
                 console.log(message)
+                
             }
             const token = response.headers.authorization;
             console.log(token)
             localStorage.setItem("accessToken", token)
             const decoded = jwt_decode(token)
             console.log(decoded);
-            console.log(isLogin);
+
             dispatch(login(decoded.sub));
             console.log(isLogin);
             if (!response.data.message) {
