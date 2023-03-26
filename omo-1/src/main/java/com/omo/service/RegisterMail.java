@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omo.dto.MailCode;
 import com.omo.dto.Search;
@@ -27,6 +28,7 @@ public class RegisterMail implements MailServiceInter {
 	private String ePw; // 인증번호
 
 	// 메일 내용 작성
+	@Transactional
 	@Override
 	public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
 //		System.out.println("보내는 대상 : " + to);
@@ -60,6 +62,7 @@ public class RegisterMail implements MailServiceInter {
 	}
 
 	// 랜덤 인증 코드 전송
+	@Transactional
 	@Override
 	public String createKey() {
 		StringBuffer key = new StringBuffer();
@@ -91,6 +94,7 @@ public class RegisterMail implements MailServiceInter {
 	// sendSimpleMessage 의 매개변수로 들어온 to 는 곧 이메일 주소가 되고,
 	// MimeMessage 객체 안에 내가 전송할 메일의 내용을 담는다.
 	// 그리고 bean 으로 등록해둔 javaMail 객체를 사용해서 이메일 send!!
+	@Transactional
 	@Override
 	public String sendSimpleMessage(String to) throws Exception {
 
@@ -111,6 +115,7 @@ public class RegisterMail implements MailServiceInter {
 		return ePw; // 메일로 보냈던 인증 코드를 서버로 반환
 	}
 
+	@Transactional
 	public Search checkCode(MailCode mailcode) {
 		String email = mailcode.getEmail();
 		String code = mailcode.getCode();

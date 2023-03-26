@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { Link as LinkScroll } from "react-scroll";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,8 +7,41 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../stores/actions";
 import "./Navbar.css";
+import KakaoLogin from "./KakaoLogin";
 
 const Navbar = () => {
+  const [kpersons, setKPersons] = useState([])
+  const [kakaoNickName, setNickName] = useState("")
+  const [authority, setAuthority] = useState("")
+  const [isAdmin, toggleAdmin] = useState(false)
+
+  // const closeMenu = () => setClick(false);
+
+  useEffect(() => {
+    axios.get("kpersons")
+      .then(res => {
+        setKPersons(res.data)
+      })
+  }, [])
+
+  useEffect(() => {
+    axios.get("/getCookie").then(response => {
+      var arr = response.data.split(" ")
+      const kakaoNickName = arr[0];
+      const authority = arr[2];
+      console.log("nick: ", kakaoNickName)
+      console.log("auth: ", authority)
+      setAuthority(authority)
+      setNickName(kakaoNickName)
+    })
+  }, [kpersons])
+
+  useEffect(() => {
+    if (authority === "admin" || authority === "superAdmin") {
+      toggleAdmin(true)
+    }
+  }, [kakaoNickName, kpersons, authority])
+
   const [click, setClick] = useState(false);
   const handleClick = () => setClick(!click);
 
@@ -110,13 +143,13 @@ const Navbar = () => {
             </a>
           </li>
           <li className="nav-item">
-            <a href="/board" onClick={closeMenu}>
+            <a href="/board/1" onClick={closeMenu}>
               Board
             </a>
           </li>
         </ul>
         <ul>
-          {isLogin ?
+          {isLogin || kakaoNickName ?
             <Dropdown>
               <Dropdown.Toggle
                 variant="success"
@@ -124,7 +157,7 @@ const Navbar = () => {
                 style={{ height: "2rem", minHeight: "1rem" }}
                 className="font-bold text-white bg-green-600 border-0 shadow-md hover:bg-green-800"
               >
-                {nickName}
+                {nickName || kakaoNickName}
               </Dropdown.Toggle>
               <Dropdown.Menu className="border-0 shadow-sm">
 
@@ -149,11 +182,12 @@ const Navbar = () => {
               </Dropdown.Menu>
             </Dropdown>
             :
-            <button className="flex items-center justify-center w-16 h-8 text-white duration-150 bg-green-600 border-none rounded-md shadow-md hover:bg-green-800">
-              <Link to="/login">
-                <p className="font-semibold ">Login </p>
-              </Link>
-            </button>
+            // <button className="flex items-center justify-center w-16 h-8 text-white duration-150 bg-green-600 border-none rounded-md shadow-md hover:bg-green-800">
+            //   <Link to="/login">
+            //     <p className="font-semibold ">Login </p>
+            //   </Link>
+            // </button>
+            <KakaoLogin />
           }
 
 

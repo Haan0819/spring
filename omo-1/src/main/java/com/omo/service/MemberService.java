@@ -116,52 +116,51 @@ public class MemberService {
     }
     
     @Transactional
-    public String signup(Member member) {
-
-    	LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = now.format(formatter);
-
-        Member user = Member.builder()
-                .username(member.getUsername())
-                .password(passwordEncoder.encode(member.getPassword()))
-                .name(member.getName())
-                .nickname(member.getNickname())
-                .birth(member.getBirth())
-                .sex(member.getSex())
-                .createdAt(formattedDateTime)
-                .passwordwrong(0)
-                .activated(true)
-                .build();
-
-		user.getRoles().add("USER");
-		
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.persist(user);
-		transaction.commit();
-		entityManager.close();
-		
-		memberRepository.save(user);
-		
-        return "Success!";
+    public Result signup(Member member) {
+    	Result result = new Result();
+    	if(member != null) {
+	        String formattedDateTime = utilService.getCreatedAt();
+	
+	        Member user = Member.builder()
+	                .username(member.getUsername())
+	                .password(passwordEncoder.encode(member.getPassword()))
+	                .name(member.getName())
+	                .nickname(member.getNickname())
+	                .birth(member.getBirth())
+	                .sex(member.getSex())
+	                .createdAt(formattedDateTime)
+	                .passwordwrong(0)
+	                .activated(true)
+	                .build();
+	
+			user.getRoles().add("USER");
+			
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			EntityTransaction transaction = entityManager.getTransaction();
+			transaction.begin();
+			entityManager.persist(user);
+			transaction.commit();
+			entityManager.close();
+			
+			memberRepository.save(user);
+			result.setEmpty(true);
+        	return result;
+    	}else {
+    		result.setEmpty(false);
+    		return result;
+    	}
     }
     
     @Transactional
-    public Search checkId(Search search)throws Exception {
+    public Result checkId(Search search)throws Exception {
     	String username = search.getUsername();
     	Member user = memberRepository.findByUsername(username).orElse(null);
-    	Search check = new Search();
-    	System.out.println(username);
-    	System.out.println(user);
+    	Result result = new Result();
     	
     	try {
     	if(user != null) {
-    		check.setCheck(false);
-    		
+    		result.setEmpty(false);
     	}else {
-    		check.setCheck(true);
     		MailCode del = codeRepository.findByEmail(username);
     		if(del != null) {
     			codeRepository.delete(del);
@@ -172,24 +171,25 @@ public class MemberService {
     	   mailcode.setCode(code);
     	   mailcode.setEmail(username);
     	   codeRepository.save(mailcode);
-    		
+    	   result.setEmpty(true);
     	}
-    	return check;
+    	return result;
     }catch(MailException e){
     	return null;
     }
     }
     
     @Transactional
-    public String check_nickname(Search search) {
+    public Result check_nickname(Search search) {
     	String nickname = search.getNickname();
-    	System.out.println(nickname);
     	Member member = memberRepository.findByNickname(nickname);
-    	System.out.println(member);
+    	Result result = new Result();
+    	result.setEmpty(false);
     	if(member == null) {
-    		return "사용가능한 닉네임입니다.";
+    		result.setEmpty(true);
+    		return result;
     	}
-    	return "이미 존재하는 닉네임입니다.";
+    	return result;
     }
     
     @Transactional
@@ -210,36 +210,31 @@ public class MemberService {
     }
     
     @Transactional
-    public Search searchPw(Search search) throws Exception {
+    public Result searchPw(Search search) throws Exception {
     	String username = search.getUsername();
     	String name = search.getName();
     	String birth = search.getBirth();
     	LocalDate birthDate = LocalDate.parse(birth);
-    	System.out.println(username);
-    	System.out.println(name);
-    	System.out.println(birthDate);
     	
     	Member user = memberRepository.findByUsernameAndNameAndBirth(username, name, birthDate); 
-    	Search check = new Search();
+    	Result result = new Result();
     	try {
     	if(user != null) {
-    		check.setCheck(true);
     		MailCode del = codeRepository.findByEmail(username);
     		if(del != null) {
     			codeRepository.delete(del);
     		}
     	   String code = registerMail.sendSimpleMessage(username);
-    	   System.out.println("인증코드 : " + code);
     	   MailCode mailcode = new MailCode();
     	   mailcode.setCode(code);
     	   mailcode.setEmail(username);
     	   codeRepository.save(mailcode);
-    		
+    	   result.setEmpty(true);
     	}else {
-    		check.setCheck(false);
+    		result.setEmpty(false);
     		
     	}
-    	return check;
+    	return result;
     }catch(MailException e){
     	return null;
     }

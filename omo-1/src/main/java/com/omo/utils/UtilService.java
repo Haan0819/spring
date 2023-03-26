@@ -1,5 +1,8 @@
 package com.omo.utils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,5 +18,12 @@ public class UtilService {
 	        // 이제 token 변수에는 접두어 "Bearer "를 제거한 토큰 값이 저장되어 있음
 	    }
 	    return token;
+	}
+	
+	public String getCreatedAt() {
+		LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = now.format(formatter);
+        return formattedDateTime;
 	}
 }

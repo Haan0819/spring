@@ -1,17 +1,17 @@
 import NewNavBoard from "../../components/NewNavBoard";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
 export default function BoardList() {
+  const { page } = useParams();
   const isLoggedIn = useSelector(state => state.isLoggedIn)
   const [posts, setPost] = useState([]);
-  const [maxInt, setMaxInt] = useState();
-  const [total, setTotal] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [maxInt, setMaxInt] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(Number(page) || 1);
   const pageSize = 5;
-  let page = []
 
 
 
@@ -22,27 +22,24 @@ export default function BoardList() {
   }
 
   const onNextButton = () => {
-    setCurrentPage(currentPage + 1)
+    if (currentPage < maxInt) {
+      setCurrentPage(currentPage + 1)
+    }
   }
-
   useEffect(() => {
-
-
     axios.get('/api/post/list').then(res => {
       const startPage = (currentPage - 1) * pageSize;
       const endPage = startPage + pageSize;
+      setTotal(res.data.length)
       const post = res.data.slice(startPage, endPage);
-      console.log(post)
-      setTotal(post.length)
       setPost(post);
-
-
     }).catch(error => console.log(error))
 
 
   }, [currentPage])
 
   useEffect(() => {
+    setCurrentPage(page)
     if (total > 5) {
       if (total % 5 !== 0) {
         setMaxInt(Math.floor(total / 5 + 1))
@@ -50,7 +47,7 @@ export default function BoardList() {
         setMaxInt(Math.floor(total / 5))
       }
     }
-  }, [total]);
+  }, [total, page]);
 
   return (
     <div>
@@ -107,23 +104,15 @@ export default function BoardList() {
         }
 
         <div className="flex justify-center mt-2">
-
-
           <div>
             <button onClick={onPrevButton}>이전 페이지</button>
-            <Link className="w-4 text-sm text-center">{maxInt}</Link>
+            {[...Array(maxInt)].map((_, index) => (
+              <Link to={`/board/${index + 1}`} className="w-4 text-sm text-center mx-2" key={index}>
+                {index + 1}
+              </Link>
+            ))}
             <button onClick={onNextButton}>다음 페이지</button>
           </div>
-          {/* {maxInt.map((m, index) = (
-            <Link className="w-4 text-sm text-center" key={}>{m}</Link>
-          ))} */}
-          {page}
-          {/* <div>
-              <button onClick={onPrevButton}>이전 페이지</button>
-              <Link className="w-4 text-sm text-center">{maxInt}</Link>
-              <button onClick={onNextButton}>다음 페이지</button>
-            </div> */}
-
         </div>
       </div>
     </div>

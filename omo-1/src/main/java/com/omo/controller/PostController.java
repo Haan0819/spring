@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.omo.dto.Post;
+import com.omo.dto.Result;
 import com.omo.service.PostService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +27,8 @@ public class PostController {
 	private PostService postService;
 
     @PostMapping("/add_post")
-    public ResponseEntity<String> add(@RequestBody Post post, Authentication authentication, HttpServletRequest request){
-    	return new ResponseEntity<String>(postService.add(post, authentication, request), HttpStatus.OK);
+    public ResponseEntity<Result> add(@RequestBody Post post, Authentication authentication, HttpServletRequest request){
+    	return new ResponseEntity<Result>(postService.add(post, authentication, request), HttpStatus.OK);
     }
     
     
@@ -42,13 +43,13 @@ public class PostController {
     }
     
     @DeleteMapping(path="/delete/{no}")
-	public ResponseEntity<Post> delete(@PathVariable Post no,Authentication authentication, HttpServletRequest request) {
-		return new ResponseEntity<Post>(postService.delete(no, authentication, request), HttpStatus.OK);
+	public ResponseEntity<Result> delete(@PathVariable Post no,Authentication authentication, HttpServletRequest request) {
+		return new ResponseEntity<Result>(postService.delete(no, authentication, request), HttpStatus.OK);
 	}
     
     @PostMapping(path="/update/{no}")
-    public ResponseEntity<Post> update(@PathVariable Post no, @RequestBody Post post, Authentication authentication, HttpServletRequest request){
-    	return new ResponseEntity<Post>(postService.update(no, post, authentication, request), HttpStatus.OK);
+    public ResponseEntity<Result> update(@PathVariable Post no, @RequestBody Post post, Authentication authentication, HttpServletRequest request){
+    	return new ResponseEntity<Result>(postService.update(no, post, authentication, request), HttpStatus.OK);
     }
     
     @PostMapping(path="/myboard")

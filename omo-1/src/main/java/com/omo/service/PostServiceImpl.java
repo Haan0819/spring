@@ -1,7 +1,5 @@
 package com.omo.service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.omo.dto.Member;
 import com.omo.dto.Post;
+import com.omo.dto.Result;
 import com.omo.repository.MemberRepository;
 import com.omo.repository.PostRepository;
 import com.omo.utils.JwtTokenProvider;
+import com.omo.utils.UtilService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -26,24 +26,20 @@ public class PostServiceImpl implements PostService{
 	private JwtTokenProvider jwtTokenProvider;
 	@Autowired
 	private PostRepository postRepository;
+	@Autowired
+	private UtilService utilService;
 	
 	@Transactional
 	@Override
-	public String add(Post post, Authentication authentication, HttpServletRequest request) {
+	public Result add(Post post, Authentication authentication, HttpServletRequest request) {
 	        
 	        Member author = memberRepository.findByUsername(authentication.getName()).orElse(null); 
-	        String tokenWithPrefix = request.getHeader("Authorization");
-	        String token = "";
-	        if (tokenWithPrefix != null && tokenWithPrefix.startsWith("Bearer ")) {
-	            token = tokenWithPrefix.substring(7);
-	            // 이제 token 변수에는 접두어 "Bearer "를 제거한 토큰 값이 저장되어 있음
-	        }
+	        String token = utilService.getAccessToken(request);
 	        
-	        LocalDateTime now = LocalDateTime.now();
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	        String formattedDateTime = now.format(formatter);
+	        
+	        String formattedDateTime = utilService.getCreatedAt();
 
-	        System.out.println(token);
+	        Result result = new Result();
 	        if(jwtTokenProvider.validateToken(token)) {
 	        
 		    	Post posts = Post.builder()
@@ -55,9 +51,11 @@ public class PostServiceImpl implements PostService{
 		    			.build();
 		    	
 		    	postRepository.save(posts);
-		    	return "게시글 등록이 완료되었습니다.";
+		    	result.setEmpty(true);
+		    	return result;
 	        }else {
-	        	return "게시글 등록에 실패했습니다.";
+	        	result.setEmpty(false);
+	        	return result;
 	        }
 	    }
 	
@@ -81,45 +79,31 @@ public class PostServiceImpl implements PostService{
 	}
 
 	@Override
-	public Post delete(Post no, Authentication authentication, HttpServletRequest request) {
+	public Result delete(Post no, Authentication authentication, HttpServletRequest request) {
 		Post post = postRepository.findById(no.getId()).orElse(null);
 		Member author = memberRepository.findByNo(post.getAuthor().getNo()).orElse(null);
-		String tokenWithPrefix = request.getHeader("Authorization");
-        String token = "";
-        Post result = new Post();
-        
-        if (tokenWithPrefix != null && tokenWithPrefix.startsWith("Bearer ")) {
-            token = tokenWithPrefix.substring(7);
-            // 이제 token 변수에는 접두어 "Bearer "를 제거한 토큰 값이 저장되어 있음
-        }
-		
+		String token = utilService.getAccessToken(request);
+		Result result = new Result();
         if(jwtTokenProvider.validateToken(token) && authentication.getName().equals(author.getUsername())) {
         	postRepository.deleteById(no.getId());
-        	result.setStatus(true);
+        	result.setEmpty(true);
         	return result;
         }else {
+        	result.setEmpty(false);
         	return result;
 	}
 	}
 	
 	@Transactional
 	@Override
-	public Post update(Post no, Post newpost, Authentication authentication, HttpServletRequest request) {
+	public Result update(Post no, Post newpost, Authentication authentication, HttpServletRequest request) {
 	        
 	        Member author = memberRepository.findByUsername(authentication.getName()).orElse(null); 
 	        Post post = postRepository.findById(no.getId()).orElse(null);
-	        String tokenWithPrefix = request.getHeader("Authorization");
-	        String token = "";
-	        if (tokenWithPrefix != null && tokenWithPrefix.startsWith("Bearer ")) {
-	            token = tokenWithPrefix.substring(7);
-	            // 이제 token 변수에는 접두어 "Bearer "를 제거한 토큰 값이 저장되어 있음
-	        }
-	        
-	        LocalDateTime now = LocalDateTime.now();
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	        String formattedDateTime = now.format(formatter);
+	        String token = utilService.getAccessToken(request);
+	        String formattedDateTime = utilService.getCreatedAt();
 
-	        Post result = new Post();
+	        Result result = new Result();
 	        
 	        if(jwtTokenProvider.validateToken(token) && authentication.getName().equals(author.getUsername())) {
 	        	post.setTitle(newpost.getTitle());
@@ -127,10 +111,10 @@ public class PostServiceImpl implements PostService{
 	        	post.setUpdatedAt(formattedDateTime);
 	        	
 		    	postRepository.save(post);
-		    	result.setStatus(true);
+		    	result.setEmpty(true);
 		    	return result;
 	        }else {
-	        	result.setStatus(false);
+	        	result.setEmpty(false);
 	        	return result;
 	        }
 	    }
@@ -138,13 +122,7 @@ public class PostServiceImpl implements PostService{
 	@Override
 	public List<Post> myboard(Authentication authentication, HttpServletRequest request) {
 		Member author = memberRepository.findByUsername(authentication.getName()).orElse(null);
-        String tokenWithPrefix = request.getHeader("Authorization");
-        String token = "";
-        
-        if (tokenWithPrefix != null && tokenWithPrefix.startsWith("Bearer ")) {
-            token = tokenWithPrefix.substring(7);
-            // 이제 token 변수에는 접두어 "Bearer "를 제거한 토큰 값이 저장되어 있음
-        }
+        String token = utilService.getAccessToken(request);
         
         if(jwtTokenProvider.validateToken(token)) {
         	List<Post >myPost = postRepository.findAllByAuthor(author);

@@ -30,7 +30,7 @@ export default function App() {
           <Route path="/klogout" element={<Index />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/board" element={<BoardList />} />
+          <Route path="/board/:page" element={<BoardList />} />
           <Route path="/board/create" element={<PrivateRoute component={BoardCreate} />} />
           <Route path="/board/detail/:no" element={<BoardDetail />} />
           <Route path="/board/my" element={<BoardMy />} />

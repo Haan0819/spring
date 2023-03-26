@@ -1,42 +1,44 @@
 package com.omo.dto;
 
-import com.google.auto.value.AutoValue.Builder;
+import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
-@Entity
-@Setter
 @Getter
-@Builder
+@Setter
+@Entity(name="kperson")
 public class KPerson {
+	private String nick_name;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String nickname;
+	@Column(name = "email", unique = true)
 	private String email;
-	private String Authority;
+
+	private String authority;
 	
-
-
-
-	public String getAuthority() {
-		return Authority;
-	}
-
+	@CreatedDate
+	private LocalDateTime register_time;
+	
+	public KPerson() {}
+	
 	public void setAuthority(String authority) {
-		Authority = authority;
+		this.authority = "uesr";
 	}
-
 	
-	
+	public void update(String email, String authority) {
+		this.email = email;
+		this.authority = authority;
+	}
 	
 }

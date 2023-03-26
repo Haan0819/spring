@@ -8,12 +8,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.omo.dto.JwtToken;
 import com.omo.dto.Member;
 import com.omo.dto.MemberLoginRequestDto;
+import com.omo.dto.Result;
 import com.omo.dto.Search;
 import com.omo.repository.MemberRepository;
 import com.omo.service.MemberService;
@@ -61,13 +61,13 @@ public class MemberController {
 
     
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody Member member) {
-    	return new ResponseEntity<String>(memberService.signup(member), HttpStatus.OK);
+    public ResponseEntity<Result> signup(@RequestBody Member member) {
+    	return new ResponseEntity<Result>(memberService.signup(member), HttpStatus.OK);
     }
     
     @PostMapping("/checkid")
-    public ResponseEntity<Search> checkId(@RequestBody Search search) throws Exception{
-    	return new ResponseEntity<Search>(memberService.checkId(search), HttpStatus.OK);
+    public ResponseEntity<Result> checkId(@RequestBody Search search) throws Exception{
+    	return new ResponseEntity<Result>(memberService.checkId(search), HttpStatus.OK);
     }
     
     @PostMapping("/search_id")
@@ -76,23 +76,18 @@ public class MemberController {
     }
     
     @PostMapping("/search_pw")
-    public ResponseEntity<Search> SearchPw(@RequestBody Search search) throws Exception{
-    	return new ResponseEntity<Search>(memberService.searchPw(search), HttpStatus.OK);
+    public ResponseEntity<Result> SearchPw(@RequestBody Search search) throws Exception{
+    	return new ResponseEntity<Result>(memberService.searchPw(search), HttpStatus.OK);
     }
     @PostMapping("/change_pw")
     public ResponseEntity<Search> ChangePw(@RequestBody Search search){
     	return new ResponseEntity<Search>(memberService.changePw(search), HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-
-        return ResponseEntity.ok("Successfully logged out.");
-    }
     
     @PostMapping("/check_nickname")
-    public ResponseEntity<String> check_nickname(@RequestBody Search search){
-    	return new ResponseEntity<String>(memberService.check_nickname(search), HttpStatus.OK);
+    public ResponseEntity<Result> check_nickname(@RequestBody Search search){
+    	return new ResponseEntity<Result>(memberService.check_nickname(search), HttpStatus.OK);
     }
 
     
