@@ -1,27 +1,25 @@
 package com.omo.service;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.omo.dto.KPerson;
 import com.omo.repository.KPersonRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-
-import com.google.gson.JsonElement;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
 
 @Service
 public class KaKaoServiceImpl implements KaKaoService{
@@ -130,7 +128,7 @@ public class KaKaoServiceImpl implements KaKaoService{
 		if(kper!=null) {
 			return null;
 		}
-		kperson.setAuthority("USER");
+		kperson.setAuthority("ROLE_USER");
 		KPerson joinKperson = dao.save(kperson);
 		return joinKperson.getEmail();
 	}

@@ -33,6 +33,7 @@ public class KaKaoController {
     public HashMap<String, Object> login(@RequestParam("code") String code, HttpSession session, 
     		HttpServletResponse response, KPerson email) {
 		String ar = kservice.getKakaoAccessToken(code);
+		System.out.println(ar);
 		String[] ars = ar.split(" ");
 		if (ars.length > 0) {
 			String access_Token = ars[0];
@@ -90,7 +91,7 @@ public class KaKaoController {
 	
 	@PostMapping("/addkperson")
 	public KPerson addkperson(KPerson kperson) {
-		if(kperson.getEmail() == null) {
+		if(kperson.getEmail() != null) {
 			kservice.addkperson(kperson);
 		}
 		return kperson;

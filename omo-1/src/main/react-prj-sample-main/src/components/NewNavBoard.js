@@ -6,7 +6,7 @@ import { Dropdown } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { logout } from "../stores/actions";
-
+import { setUserRole, setCurrentUser } from "../stores/actions";
 import "./Navbar.css";
 import KakaoLogin from "./KakaoLogin";
 
@@ -15,34 +15,6 @@ const Navbar = () => {
   const [kakaoNickName, setNickName] = useState("")
   const [authority, setAuthority] = useState("")
   const [isAdmin, toggleAdmin] = useState(false)
-
-  // const closeMenu = () => setClick(false);
-
-  useEffect(() => {
-    axios.get("kpersons")
-      .then(res => {
-        setKPersons(res.data)
-      })
-  }, [])
-
-  useEffect(() => {
-    axios.get("/getCookie").then(response => {
-      var arr = response.data.split(" ")
-      const kakaoNickName = arr[0];
-      const authority = arr[2];
-      console.log("nick: ", kakaoNickName)
-      console.log("auth: ", authority)
-      setAuthority(authority)
-      setNickName(kakaoNickName)
-    })
-  }, [kpersons])
-
-  useEffect(() => {
-    if (authority === "admin" || authority === "superAdmin") {
-      toggleAdmin(true)
-    }
-  }, [kakaoNickName, kpersons, authority])
-
   const [click, setClick] = useState(false);
   const handleClick = () => setClick(!click);
   const userRole = useSelector(state => state.userRole)
@@ -53,6 +25,30 @@ const Navbar = () => {
   const users = useSelector(state => state.user);
   const isLogin = useSelector(state => state.isLoggedIn);
   const nickName = useSelector(state => state.nickName);
+  // const closeMenu = () => setClick(false);
+
+  // useEffect(() => {
+  //   axios.get("kpersons")
+  //     .then(res => {
+  //       setKPersons(res.data)
+  //     })
+  // }, [])
+
+  useEffect(() => {
+    axios.get("/getCookie").then(response => {
+      var arr = response.data.split(" ")
+      const kakaoNickName = arr[0];
+      const authority = arr[2];
+      console.log("nick: ", kakaoNickName)
+      console.log("auth: ", authority)
+      // setAuthority(authority)
+      dispatch(setCurrentUser(kakaoNickName));
+      dispatch(setUserRole(authority));
+      setNickName(kakaoNickName)
+    })
+  }, [kpersons])
+
+
 
 
   const onLogoutHandler = () => {
@@ -171,21 +167,24 @@ const Navbar = () => {
                     회원 관리
                   </Dropdown.Item>
                   : <></>}
-                <Dropdown.Item>
-                  <button onClick={onLogoutHandler}>로그아웃</button>
-                </Dropdown.Item>
-
+                {kakaoNickName ?
+                  <KakaoLogin />
+                  :
+                  <Dropdown.Item>
+                    <button onClick={onLogoutHandler}>로그아웃</button>
+                  </Dropdown.Item>
+                }
 
 
               </Dropdown.Menu>
             </Dropdown>
             :
-            // <button className="flex items-center justify-center w-16 h-8 text-white duration-150 bg-green-600 border-none rounded-md shadow-md hover:bg-green-800">
-            //   <Link to="/login">
-            //     <p className="font-semibold ">Login </p>
-            //   </Link>
-            // </button>
-            <KakaoLogin />
+            <button className="flex items-center justify-center w-16 h-8 text-white duration-150 bg-green-600 border-none rounded-md shadow-md hover:bg-green-800">
+              <Link to="/login">
+                <p className="font-semibold ">Login </p>
+              </Link>
+            </button>
+
           }
         </ul>
       </nav>

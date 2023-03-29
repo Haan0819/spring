@@ -35,6 +35,11 @@ public class Comment {
 	@JoinColumn(name="member_no")
 	private Member author;
 	
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.DETACH)
+	@JoinColumn(name="kperson_id")
+	private KPerson kauthor;
+	
     @JsonProperty("author_id")
     private String authorId;
     
@@ -58,6 +63,10 @@ public class Comment {
         if (this.author != null) {
             this.authorId = this.author.getNickname();
             this.authorEmail = this.author.getUsername();
+        }
+        if(this.kauthor != null) {
+        	this.authorId = this.kauthor.getNick_name();
+        	this.authorEmail = this.kauthor.getEmail();
         }
     }
 	

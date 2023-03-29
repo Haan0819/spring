@@ -44,6 +44,11 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "member_no", referencedColumnName = "member_no", nullable=true)
     private Member author;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "kperson_id", referencedColumnName = "kperson_id", nullable=true)
+    private KPerson kauthor;
     
     @JsonProperty("author_id")
     private String authorId;
@@ -67,7 +72,12 @@ public class Post {
         if (this.author != null) {
             this.authorId = this.author.getNickname();
         }
+        if(this.kauthor != null) {
+        	this.authorId = this.kauthor.getNick_name();
+        }
     }
+    
+    
 
 	public boolean isNotice() {
 		return notice;

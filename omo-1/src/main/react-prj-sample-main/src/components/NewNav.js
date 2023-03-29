@@ -17,12 +17,12 @@ const Navbar = () => {
 
   // const closeMenu = () => setClick(false);
 
-  useEffect(() => {
-    axios.get("kpersons")
-      .then(res => {
-        setKPersons(res.data)
-      })
-  }, [])
+  // useEffect(() => {
+  //   axios.get("kpersons")
+  //     .then(res => {
+  //       setKPersons(res.data)
+  //     })
+  // }, [])
 
   useEffect(() => {
     axios.get("/getCookie").then(response => {
@@ -52,17 +52,11 @@ const Navbar = () => {
   const isLogin = useSelector(state => state.isLoggedIn);
   const nickName = useSelector(state => state.nickName);
   const userRole = useSelector(state => state.userRole)
-  const handleMyBoard = () => {
-    navigate('/board/my');
-  }
-  const handleChangeInfo = () => {
-    navigate('/ChangeInfo');
-  }
 
 
   const onLogoutHandler = () => {
     localStorage.removeItem("accessToken");
-    axios.post('/logout', {}).then(res => console.log(res)).catch(error => console.log(error))
+    axios.post('/logout', {}).then(res => window.location.reload()).catch(error => console.log(error))
     dispatch(logout(users))
     navigate('/')
   }
@@ -182,12 +176,8 @@ const Navbar = () => {
               </Dropdown.Menu>
             </Dropdown>
             :
-            // <button className="flex items-center justify-center w-16 h-8 text-white duration-150 bg-green-600 border-none rounded-md shadow-md hover:bg-green-800">
-            //   <Link to="/login">
-            //     <p className="font-semibold ">Login </p>
-            //   </Link>
-            // </button>
             <KakaoLogin />
+
           }
 
 

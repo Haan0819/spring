@@ -47,7 +47,7 @@ if (localStorage.accessToken && localStorage.accessToken != null) {
   }
 
 }
-if (localStorage.accessToken == null) {
+if (localStorage.accessToken === undefined) {
   localStorage.removeItem("accessToken")
 }
 

@@ -68,10 +68,11 @@ export default function Login() {
       ).then(response => {
         console.log(response)
         setKPerson(response.data)
+        localStorage.setItem("kakao", response.data)
         window.history.pushState(kperson, null, "http://localhost:3000/");
       })
     }
-  })
+  }, [code])
 
 
   return (

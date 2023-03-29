@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
+import { Dropdown } from "react-bootstrap";
 
 
 function KakaoLogin() {
@@ -17,10 +18,10 @@ function KakaoLogin() {
 
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
-
+    console.log(code)
     function deleteCookie() {
         removeCookie('nickName');
-        axios.get('/deleteCookie')
+        axios.get('/deleteCookie').then(res => window.location.reload())
     }
 
     useEffect(() => {
@@ -29,6 +30,7 @@ function KakaoLogin() {
                 { params: { code: code } }
             ).then(response => {
                 setKPerson(response.data)
+                localStorage.setItem("kakao", response.data)
                 window.location.assign("http://localhost:3000")
             })
         }
@@ -63,19 +65,14 @@ function KakaoLogin() {
 
     const POSTURI = "http://localhost:3000/post/list"//eslint-disable-line no-unused-vars
 
-    if (nickName) {
-        return <>
-            <p className="text-white nav-item">{nickName}</p>
-            <a className="w-16 h-8" href={KAKAO_LOGOUT_URL} id="logout" onClick={deleteCookie}>
-                <button className="w-16 h-8 text-white bg-blue-600 border-none rounded-md hover:bg-blue-800">
-                    Logout
-                </button>
-            </a>
-        </>
-    } else {
-        return <button className="w-16 h-8 text-white bg-blue-600 border-none rounded-md hover:bg-blue-800">
-            <Link to="/login">Login</Link>
-        </button>
+    if (!nickName) {
+        return (
+            <button className="flex items-center justify-center w-16 h-8 text-white duration-150 bg-green-600 border-none rounded-md shadow-md hover:bg-green-800">
+                <Link to="/login">
+                    <p className="font-semibold ">Login </p>
+                </Link>
+            </button>
+        )
     }
 
 }
