@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.omo.dto.Comment;
 import com.omo.dto.Post;
+import com.omo.dto.Result;
 import com.omo.service.CommentService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,19 +34,19 @@ public class CommentController {
 	}
 //	코맨트 추가
 	@PostMapping(path="/add/{no}")
-	public ResponseEntity<Comment> add_comment(@RequestBody Comment comment, @PathVariable Post no, Authentication authentication, HttpServletRequest request){
-		return new ResponseEntity<Comment>(service.add_comment(comment, no, authentication, request), HttpStatus.OK);
+	public ResponseEntity<Result> add_comment(@RequestBody Comment comment, @PathVariable Post no, Authentication authentication, HttpServletRequest request){
+		return new ResponseEntity<Result>(service.add_comment(comment, no, authentication, request), HttpStatus.OK);
 	}
 //	코맨트 삭제
 	@DeleteMapping(path="/delete/{no}")
-	public ResponseEntity<Comment> delete(@PathVariable Comment no,Authentication authentication, HttpServletRequest request) {
-		return new ResponseEntity<Comment>(service.delete(no, authentication, request), HttpStatus.OK);
+	public ResponseEntity<Result> delete(@PathVariable Comment no,Authentication authentication, HttpServletRequest request) {
+		return new ResponseEntity<Result>(service.delete(no, authentication, request), HttpStatus.OK);
 	}
 	
 //	코맨트 수정
 	@PostMapping(path="/update/{no}")
-	public ResponseEntity<Comment> update(@PathVariable Comment no,@RequestBody Comment comment ,Authentication authentication, HttpServletRequest request) {
-		return new ResponseEntity<Comment>(service.update(no, comment,authentication, request), HttpStatus.OK);
+	public ResponseEntity<Result> update(@PathVariable Comment no,@RequestBody Comment comment ,Authentication authentication, HttpServletRequest request) {
+		return new ResponseEntity<Result>(service.update(no, comment,authentication, request), HttpStatus.OK);
 	}
 
 	

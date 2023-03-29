@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.omo.dto.MailCode;
-import com.omo.dto.Search;
+import com.omo.dto.Result;
 import com.omo.repository.CodeRepository;
 import com.omo.service.RegisterMail;
 
@@ -45,8 +45,8 @@ public class EmailController {
 	}
 	
 	@PostMapping("/login/check")
-	public ResponseEntity<Search> CheckCode(@RequestBody MailCode mailcode) {
-		return new ResponseEntity<Search>(registerMail.checkCode(mailcode), HttpStatus.OK);
+	public ResponseEntity<Result> CheckCode(@RequestBody MailCode mailcode) {
+		return new ResponseEntity<Result>(registerMail.checkCode(mailcode), HttpStatus.OK);
 	}
 	
 	

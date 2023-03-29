@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.omo.dto.MailCode;
-import com.omo.dto.Search;
+import com.omo.dto.Result;
 import com.omo.repository.CodeRepository;
 
 import jakarta.mail.MessagingException;
@@ -116,17 +116,17 @@ public class RegisterMail implements MailServiceInter {
 	}
 
 	@Transactional
-	public Search checkCode(MailCode mailcode) {
+	public Result checkCode(MailCode mailcode) {
 		String email = mailcode.getEmail();
 		String code = mailcode.getCode();
 		MailCode info = codeRepository.findByEmailAndCode(email, code);
-		Search check = new Search();
+		Result check = new Result();
 		if(info == null) {
-			check.setCheck(false);
+			check.setEmpty(false);
 			return check;
 		}
 		codeRepository.delete(info);
-		check.setCheck(true);
+		check.setEmpty(true);
 		return check;
 	}
 }

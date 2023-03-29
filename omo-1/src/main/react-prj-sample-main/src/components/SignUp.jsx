@@ -35,10 +35,13 @@ export default function SignUp() {
   const [select_s, setselect_s] = useState("---");
   const [checkEmail, setCheckEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
-  const [isComplete, setComplete] = useState(false);
+  const [isComplete, setComplete] = useState({
+    email: false,
+    mailcode: false,
+    nickname: false,
+  });
 
   let CheckEmailMessage = "";
-  let isCheck_id = false;
   let date = new Date();
   let lastyear = date.getUTCFullYear();
   let Days = [];
@@ -55,10 +58,15 @@ export default function SignUp() {
 
   const checkId = (e) => {
     e.preventDefault();
+    if (info.username.length < 1) {
+      alert("이메일을 입력해주세요.")
+      return;
+    }
     const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(info.username);
     if (!isValid) {
       CheckEmailMessage = "이메일 형식을 확인해주세요.";
       setEmailMessage(CheckEmailMessage);
+      setComplete()
       return;
     }
     console.log(info.username);
@@ -67,15 +75,13 @@ export default function SignUp() {
         username: info.username,
       })
       .then((res) => {
-        console.log(res.data.check);
-        if (res.data.check == false) {
+        if (res.data.empty == false) {
           alert("존재하는 이메일입니다.");
-          setEmailMessage("");
-          isCheck_id = false;
+          setComplete({ ...isComplete, email: false })
+
         } else {
           alert("사용가능한 이메일입니다.\n인증코드를 입력해주세요.");
-          isCheck_id = true;
-          setEmailMessage("");
+          setComplete({ ...isComplete, email: true })
         }
       })
       .catch((error) => console.log(error));
@@ -127,24 +133,31 @@ export default function SignUp() {
   const HandlerSignUp = (e) => {
     e.preventDefault();
 
-    if (isComplete == false) {
+    if (isComplete.email === false) {
       return alert("이메일 인증을 완료해주세요.");
-    } else if (info.password != info.passwordChk) {
+    }
+    if (isComplete.mailcode === false) {
+      return alert("메일인증을 완료해주세요.")
+    }
+    if (isComplete.nickname === false) {
+      return alert("닉네임 중복검사를 해주세요.")
+    }
+    if (info.password != info.passwordChk) {
       return alert("비밀번호가 일치하지 않습니다.");
     }
     console.log(info);
-    axios
-      .post("/api/auth/signup", {
-        username: info.username,
-        password: info.password,
-        name: info.name,
-        nickname: info.nickname,
-        birth: selectyear + "-" + selected + "-" + selectday,
-        sex: info.sex,
-      })
+    axios.post("/api/auth/signup", {
+      username: info.username,
+      password: info.password,
+      name: info.name,
+      nickname: info.nickname,
+      birth: selectyear + "-" + selected + "-" + selectday,
+      sex: info.sex,
+    })
       .then((res) => {
         console.log(res)
         alert("가입이 완료되었습니다.")
+        navigate('/login')
       })
       .catch((error) => console.log(error));
   };
@@ -157,22 +170,37 @@ export default function SignUp() {
     }
     axios.post('/api/auth/check_nickname', {
       nickname: info.nickname
-    }).then(res => console.log(res.data)).catch(error => console.log(error))
+    }).then(res => {
+      if (res.data) {
+        alert("사용가능한 닉네임입니다.")
+        setComplete({ ...isComplete, nickname: true })
+      }
+    }).catch(error => {
+      alert("중복된 닉네임입니다.")
+      setComplete({ ...isComplete, nickname: false })
+    })
   }
 
   const CheckEmailHandler = (e) => {
     e.preventDefault();
+    if (checkEmail.length < 1) {
+      return alert("인증코드를 입력해주세요.")
+    }
     axios
       .post("/auth/login/check", {
         email: info.username,
         code: checkEmail,
       })
       .then((res) => {
-        console.log(res);
-        alert("인증이 완료되었습니다.");
-        setComplete(true);
+        if (res.data.empty === true) {
+          alert("인증이 완료되었습니다.");
+          setComplete({ ...isComplete, mailcode: true });
+        }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        alert("인증코드가 일치하지 않습니다.")
+        setComplete({ ...isComplete, mailcode: false });
+      });
   };
 
   return (
@@ -181,54 +209,91 @@ export default function SignUp() {
         <div className="px-6 py-8 text-black bg-white rounded shadow-md w-80">
           <h1 className="mb-8 text-2xl text-center text-primary">Sign Up</h1>
           <div className="">
-            <div className="flex justify-between w-full align-middle ">
-              <input
-                className="w-48 h-5 p-3 text-sm font-semibold bg-white border-blue-500 rounded-md input input-primary"
-                placeholder="이메일"
-                style={{ boxSizing: "borderBox" }}
-                type="text"
-                value={info.username}
-                onChange={(e) => {
-                  setInfo({ ...info, username: e.target.value });
-                  isCheck_id = false;
-                }}
-              />
-              <button
-                onClick={checkId}
-                className="w-16 h-8 text-sm text-white bg-blue-500 rounded-md"
-              >
-                중복확인
-              </button>
-            </div>
+            {isComplete.email ?
+              <div className="flex justify-between w-full align-middle ">
+                <input
+                  readOnly={true}
+                  className="w-48 h-5 p-3 text-sm font-semibold bg-white border-blue-500 rounded-md input input-primary"
+                  placeholder="이메일"
+                  style={{ boxSizing: "borderBox" }}
+                  type="text"
+                  value={info.username}
+                  onChange={(e) => {
+                    setInfo({ ...info, username: e.target.value });
+                    setComplete({ ...isComplete, email: false })
+                  }}
+                />
+                <button
+                  className="w-16 h-8 text-sm text-white bg-blue-500 rounded-md"
+                >
+                  확인완료
+                </button>
+              </div>
+              :
+              <div className="flex justify-between w-full align-middle ">
+                <input
+                  className="w-48 h-5 p-3 text-sm font-semibold bg-white border-blue-500 rounded-md input input-primary"
+                  placeholder="이메일"
+                  style={{ boxSizing: "borderBox" }}
+                  type="text"
+                  value={info.username}
+                  onChange={(e) => {
+                    setInfo({ ...info, username: e.target.value });
+                    setComplete({ ...isComplete, email: false })
+                  }}
+                />
+                <button
+                  onClick={checkId}
+                  className="w-16 h-8 text-sm text-white bg-blue-500 rounded-md"
+                >
+                  중복확인
+                </button>
+              </div>
+            }
             <div className="flex">
               <p className="ml-4 text-sm">{emailMessage}</p>
               <p className="text-white">.</p>
             </div>
           </div>
+          {isComplete.mailcode ?
+            <div className="flex justify-between mb-3">
+              <input
+                readOnly={true}
+                className="w-48 h-5 p-3 text-sm font-semibold bg-white border-blue-500 rounded-md input input-primary"
+                placeholder="인증번호를 입력해 주세요."
+                type="text"
+                value={checkEmail}
+                onChange={(e) => {
+                  setCheckEmail(e.target.value)
+                  setComplete({ ...isComplete, mailcode: false })
+                }}
+              />
 
-          <div className="flex justify-between mb-3">
-            <input
-              className="w-48 h-5 p-3 text-sm font-semibold bg-white border-blue-500 rounded-md input input-primary"
-              placeholder="인증번호를 입력해 주세요."
-              type="text"
-              value={checkEmail}
-              onChange={(e) => {
-                setCheckEmail(e.target.value)
-                setComplete(false)
-              }}
-            />
-            {isComplete ? (
               <button>인증완료</button>
-            ) : (
+            </div>
+            :
+            <div>
+              <input
+                className="w-48 h-5 p-3 text-sm font-semibold bg-white border-blue-500 rounded-md input input-primary"
+                placeholder="인증번호를 입력해 주세요."
+                type="text"
+                value={checkEmail}
+                onChange={(e) => {
+                  setCheckEmail(e.target.value)
+                  setComplete({ ...isComplete, mailcode: false })
+                }}
+              />
               <button
                 className="w-16 h-8 text-sm text-white bg-blue-500 rounded-md"
                 onClick={CheckEmailHandler}
               >
                 인증
               </button>
-            )}
-          </div>
+            </div>
+          }
 
+
+          <br />
           <input
             className="w-48 h-5 p-3 mb-3 text-sm font-semibold bg-white border-blue-500 rounded-md input input-primary"
             placeholder="비밀번호"

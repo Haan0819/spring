@@ -51,8 +51,7 @@ public class Comment {
 	
 	private String created_at;
 	private String updated_at;
-	
-	private boolean status;
+
 	
     @PostLoad
     private void populateAuthorId() {

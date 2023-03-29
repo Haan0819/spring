@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.omo.dto.Comment;
 import com.omo.dto.Member;
 import com.omo.dto.Post;
+import com.omo.dto.Result;
 import com.omo.repository.CommentRepository;
 import com.omo.repository.MemberRepository;
 import com.omo.repository.PostRepository;
@@ -38,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 	
 	@Override
-	public Comment add_comment(Comment comments, Post no, Authentication authentication, HttpServletRequest request) {
+	public Result add_comment(Comment comments, Post no, Authentication authentication, HttpServletRequest request) {
 		Member author = memberRepository.findByUsername(authentication.getName()).orElse(null);
         String tokenWithPrefix = request.getHeader("Authorization");
         String token = "";
@@ -53,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = now.format(formatter);
-        Comment result = new Comment();
+        Result result = new Result();
         
         System.out.println(token);
         if(jwtTokenProvider.validateToken(token)) {
@@ -66,21 +67,21 @@ public class CommentServiceImpl implements CommentService {
         			.build();
         	
         	commentRepository.save(comment);
-        	result.setStatus(true);
+        	result.setEmpty(true);
 	    	return result;
         }else {
-        	result.setStatus(false);
+        	result.setEmpty(false);
         	return result;
         }
     }
 
 	@Override
-	public Comment delete(Comment no, Authentication authentication, HttpServletRequest request) {
+	public Result delete(Comment no, Authentication authentication, HttpServletRequest request) {
 		Comment comment = commentRepository.findById(no.getId()).orElse(null);
 		Member author = memberRepository.findByNo(comment.getAuthor().getNo()).orElse(null);
 		String tokenWithPrefix = request.getHeader("Authorization");
         String token = "";
-        Comment result = new Comment();
+        Result result = new Result();
         
         if (tokenWithPrefix != null && tokenWithPrefix.startsWith("Bearer ")) {
             token = tokenWithPrefix.substring(7);
@@ -89,21 +90,21 @@ public class CommentServiceImpl implements CommentService {
 		
         if(jwtTokenProvider.validateToken(token) && authentication.getName().equals(author.getUsername())) {
         	commentRepository.deleteById(no.getId());
-        	result.setStatus(true);
+        	result.setEmpty(true);
         	return result;
         }else {
-        	result.setStatus(false);
+        	result.setEmpty(false);
         	return result;
 	}
 	}
 
 	@Override
-	public Comment update(Comment no, Comment comment, Authentication authentication, HttpServletRequest request) {
+	public Result update(Comment no, Comment comment, Authentication authentication, HttpServletRequest request) {
 		Comment comm = commentRepository.findById(no.getId()).orElse(null);
 		Member author = memberRepository.findByNo(comment.getAuthor().getNo()).orElse(null);
 		String tokenWithPrefix = request.getHeader("Authorization");
         String token = "";
-        Comment result = new Comment();
+        Result result = new Result();
         
         if (tokenWithPrefix != null && tokenWithPrefix.startsWith("Bearer ")) {
             token = tokenWithPrefix.substring(7);
@@ -119,10 +120,10 @@ public class CommentServiceImpl implements CommentService {
         	comm.setUpdated_at(formattedDateTime);
         	commentRepository.save(comm);
         	
-        	result.setStatus(true);
+        	result.setEmpty(true);
         	return result;
         }else {
-        	result.setStatus(false);
+        	result.setEmpty(false);
         	return result;
 	}
 	}

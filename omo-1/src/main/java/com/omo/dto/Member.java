@@ -73,7 +73,7 @@ public class Member implements UserDetails {
     private List<Comment> comments = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "author", cascade = CascadeType.DETACH, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.DETACH)
     private List<Post> posts = new ArrayList<>();
 
 
